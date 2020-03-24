@@ -120,7 +120,19 @@ public class MyLinkedList<E> implements List<E> {
     }
 
     public E get(int index) {
-        return null;
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (index < size() - 1) {
+            Node<E> current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.getNext();
+            }
+            return current.getData();
+        }
+
+        return tail.getData();
     }
 
     public E set(int index, E element) {

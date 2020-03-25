@@ -1,7 +1,4 @@
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class MyLinkedList<E> implements List<E> {
 
@@ -41,6 +38,53 @@ public class MyLinkedList<E> implements List<E> {
         }
     }
 
+    class LinkedListIterator implements Iterator<E> {
+        private Node<E> current;
+        private Node<E> previous1;
+        private Node<E> previous2;
+
+        private boolean removeCalled; //for tracking remove method right invocation
+
+
+        public LinkedListIterator() {
+            current = head;
+            previous1 = null;
+            previous2 = null;
+            removeCalled = false;
+        }
+
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        public E next() {
+            if (current == null) {
+                throw new NoSuchElementException();
+            }
+            E temp = current.getData();
+            previous2 = previous1;
+            previous1 = current;
+            current = current.getNext();
+            removeCalled = false; //for tracking remove method right invocation
+            return temp;
+        }
+
+        public void remove() {
+            if (previous1 == null || removeCalled) {
+                throw new IllegalStateException();
+            }
+
+            if (previous2 == null) {
+                head = current; // remove called once
+            } else {
+                previous2.setNext(current); // prev2 --> X prev1 --> current
+                previous1 = previous2;
+            }
+            currentSize--;
+            removeCalled = true; //for tracking remove method right invocation
+        }
+    }
+
     public int hashCode() {
         return super.hashCode();
     }
@@ -66,7 +110,7 @@ public class MyLinkedList<E> implements List<E> {
     }
 
     public Iterator<E> iterator() {
-        return null;
+        return new LinkedListIterator();
     }
 
     public Object[] toArray() {
